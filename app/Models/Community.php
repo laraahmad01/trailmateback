@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Community extends Model
 {
     use HasFactory;
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'community_members', 'community_id', 'member_id');
+    }
 }

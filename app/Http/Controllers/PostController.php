@@ -2,66 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function create(Request $request)
-    {
-        $validatedData = $request->validate([
-            'community_id' => 'required',
-            'user_id' => 'required',
-            'post_type' => 'required|in:text,image,location,date,tag',
-            'content' => 'required',
-            'image_url' => 'nullable',
-            'description' => 'required',
-            'date' => 'nullable',
-            'location' => 'nullable',
-            'person_tag' => 'nullable|exists:users,username',
-        ]);
-
-        $post = Post::create($validatedData);
-
-        return response()->json(['message' => 'Post created successfully', 'post' => $post]);
-    }
-    public function getAllPosts()
+    public function index()
     {
         $posts = Post::all();
-
-        return response()->json(['posts' => $posts]);
+        return response()->json($posts);
     }
 
-    public function getPost($postId)
+    public function store(Request $request)
     {
-        $post = Post::findOrFail($postId);
-
-        return response()->json(['post' => $post]);
+        $post = Post::create($request->all());
+        return response()->json($post, 201);
     }
-    public function update(Request $request, $postId)
+
+    public function show($id)
     {
-        $post = Post::findOrFail($postId);
-
-        $validatedData = $request->validate([
-            'community_id' => 'required',
-            'user_id' => 'required',
-            'post_type' => 'required|in:text,image,location,date,tag',
-            'content' => 'required',
-            'image_url' => 'nullable',
-            'description' => 'required',
-            'date' => 'nullable',
-            'location' => 'nullable',
-            'person_tag' => 'nullable|exists:users,username',
-        ]);
-
-        $post->update($validatedData);
-
-        return response()->json(['message' => 'Post updated successfully', 'post' => $post]);
+        $post = Post::findOrFail($id);
+        return response()->json($post);
     }
-    public function delete($postId)
+
+    public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($postId);
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+        return response()->json($post, 200);
+    }
+
+    public function destroy($id)
+    {
+        $post = Post::findOrFail($id);
         $post->delete();
-
-        return response()->json(['message' => 'Post deleted successfully']);
+        return response()->json(null, 204);
     }
 }
