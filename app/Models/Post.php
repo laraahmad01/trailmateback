@@ -23,6 +23,24 @@ public function taggedUser()
 {
     return $this->belongsTo(User::class, 'person_tag', 'firstname', 'lastname');
 }
+public function community()
+    {
+        return $this->belongsTo(Community::class);
+    }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
     use HasFactory;
 }

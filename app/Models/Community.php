@@ -12,4 +12,13 @@ class Community extends Model
     {
         return $this->belongsToMany(User::class, 'community_members', 'community_id', 'member_id');
     }
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+    public function memberss()
+    {
+        return $this->hasMany(CommunityMember::class);
+    }
+
 }

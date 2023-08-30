@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        $posts = Post::all();
+    public function index() {
+        $posts = Post::with('user:id,firstname,lastname', 'community:name')->get();
         return response()->json($posts);
     }
+    
 
     public function store(Request $request)
     {
@@ -38,4 +38,18 @@ class PostController extends Controller
         $post->delete();
         return response()->json(null, 204);
     }
+    public function getCommunityPosts($communityId)
+{
+    try {
+        $posts = Post::where('community_id', $communityId)->get();
+        return response()->json($posts);
+    } catch (\Exception $e) {
+        // Log the error for debugging purposes
+        Log::error('Error fetching community posts:', ['error' => $e->getMessage()]);
+
+        // Return an error response
+        return response()->json(['error' => 'An error occurred while fetching community posts.'], 500);
+    }
+}
+
 }

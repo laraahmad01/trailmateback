@@ -69,4 +69,6 @@ public function getMembersNames($communityId)
         $member->delete();
         return response()->json(null, 204);
     }
+
+    
 }
