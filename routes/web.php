@@ -23,6 +23,8 @@ Route::post('/communities', [CommunityController::class, 'store']);
 Route::get('/communities/{id}', [CommunityController::class, 'show']);
 Route::put('/communities/{id}', [CommunityController::class, 'update']);
 Route::delete('/communities/{id}', [CommunityController::class, 'destroy']);
+Route::delete('communities/{communityId}', [CommunityController::class, 'deleteCommunity']);
+Route::get('community/{communityId}/members/count', [CommunityController::class, 'getMembersCountForCommunity']);
 
 Route::get('/communities/{communityId}/members', [CommunityMemberController::class, 'index']);
 Route::post('/communities/{communityId}/members', [CommunityMemberController::class, 'store']);
@@ -31,10 +33,11 @@ Route::put('/communities/{communityId}/members/{memberId}', [CommunityMemberCont
 Route::delete('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
 Route::get('community/{communityId}/members/names', [CommunityMemberController::class, 'getMembersNames']);
 
-
 Route::get('/posts', [PostController::class, 'index']);
 Route::post('/posts', [PostController::class, 'store']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::put('/posts/{id}', [PostController::class, 'update']);
 Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
+
 
