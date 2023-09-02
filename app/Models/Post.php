@@ -42,5 +42,6 @@ public function community()
     {
         return $this->hasMany(Comment::class);
     }
+    
     use HasFactory;
 }

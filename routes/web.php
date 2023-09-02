@@ -5,9 +5,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommunityMemberController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\DB;
-
-
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,4 +41,12 @@ Route::put('/posts/{id}', [PostController::class, 'update']);
 Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
 
+Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
+Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);
+Route::delete('/likes/{postId}/{likeId}', [LikeController::class, 'removeLikeFromPost']);
+Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']);
 
+Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
+Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
+Route::post('comments/{postId}', [CommentController::class, 'addComment']);
+Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);

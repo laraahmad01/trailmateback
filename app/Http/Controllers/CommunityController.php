@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Community;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+
 
 class CommunityController extends Controller
 {
