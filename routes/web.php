@@ -19,6 +19,7 @@ Route::get('users/{id}', [UserController::class, 'getUser']);
 Route::get('users', [UserController::class, 'getAllUsers']);
 
 
+Route::post('/communities/create', [CommunityController::class, 'create']);
 Route::get('/communities', [CommunityController::class, 'index']);
 Route::post('/communities', [CommunityController::class, 'store']);
 Route::get('/communities/{id}', [CommunityController::class, 'show']);
@@ -33,6 +34,8 @@ Route::get('/communities/{communityId}/members/{memberId}', [CommunityMemberCont
 Route::put('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'update']);
 Route::delete('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
 Route::get('community/{communityId}/members/names', [CommunityMemberController::class, 'getMembersNames']);
+Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
+
 
 Route::get('/posts', [PostController::class, 'index']);
 Route::post('/posts', [PostController::class, 'store']);
@@ -40,6 +43,9 @@ Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::put('/posts/{id}', [PostController::class, 'update']);
 Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
+Route::get('post/{postId}/comments/count', [PostController::class, 'getCommentsCountForPost']);
+Route::get('post/{postId}/likes/count', [PostController::class, 'getLikesCountForPost']);
+
 
 Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
 Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);

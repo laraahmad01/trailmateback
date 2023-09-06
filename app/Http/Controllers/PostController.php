@@ -53,5 +53,20 @@ class PostController extends Controller
         return response()->json(['error' => 'An error occurred while fetching community posts.'], 500);
     }
 }
+public function getCommentsCountForPost($postId)
+{
+    $post = Post::findOrFail($postId);
+    $commentsCount = $post->comments()->count();
+
+    return response()->json(['count' => $commentsCount]);
+}
+
+public function getLikesCountForPost($postId)
+{
+    $post = Post::findOrFail($postId);
+    $likesCount = $post->likes()->count();
+
+    return response()->json(['count' => $likesCount]);
+}
 
 }

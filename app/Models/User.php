@@ -57,5 +57,9 @@ class User extends Authenticatable
     public function comments() {
         return $this->hasMany(Comment::class);
     }
+    public function adminCommunities(): BelongsToMany
+    {
+        return $this->belongsToMany(Community::class, 'community_admins', 'admin_id', 'community_id');
+    }
     
 }
