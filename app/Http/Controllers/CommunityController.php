@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Community;
 use App\Models\User;
+use App\Models\CommunityMember;
 
 
 class CommunityController extends Controller
@@ -16,10 +17,10 @@ class CommunityController extends Controller
         return response()->json($communities);
     }
 
-    public function store(Request $request)
+    public function formSubmit(Request $request)
     {
-        $community = Community::create($request->all());
-        return response()->json($community, 201);
+      //  $community = Community::create($request->all());
+      return response()->json([$request->all()]);
     }
 
     public function show($id)
@@ -82,20 +83,32 @@ public function create(Request $request)
         'name' => 'required|string|max:255',
         'description' => 'nullable|string',
         'image_url' => 'nullable|string', 
+        'admin_id' => 'nullable|integer', // Use 'integer' instead of 'number'
+        'visibility' => 'nullable|string',
     ]);
 
-    $adminId = auth()->user()->id;
+    $adminId = 1; // You can use auth()->user()->id if needed
 
+    // Create the community
     $community = new Community;
-    $community->name = $validatedData['name'];
-    $community->description = $validatedData['description'];
-    $community->image_url = $validatedData['image_url'];
+    $community->name = $request->input('name');
+    $community->description = $request->input('description');
+    $community->image_url = '12345';
     $community->admin_id = $adminId;
     $community->visibility = 'public'; 
     $community->save();
 
-    return response()->json(['message' => 'Community created successfully']);
+    // Create the community member record for the admin
+    $communityMember = new CommunityMember;
+    $communityMember->community_id = $community->id;
+    $communityMember->member_id = $adminId;
+    $communityMember->is_admin = 1; // Admin status
+    $communityMember->muted = 0;    // Not muted
+    $communityMember->save();
+
+    return response()->json(['message' => 'Community created successfully', 'community' => $community]);
 }
+
 
 public function addAdmin(Community $community, Request $request)
 {
