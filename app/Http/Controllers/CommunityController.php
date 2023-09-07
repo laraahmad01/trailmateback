@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Community;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Community;
+use App\Models\User;
 
 
 class CommunityController extends Controller
@@ -74,6 +74,43 @@ class CommunityController extends Controller
     $membersCount = $community->memberss()->count();
 
     return response()->json(['count' => $membersCount]);
+}
+
+public function create(Request $request)
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image_url' => 'nullable|string', 
+    ]);
+
+    $adminId = auth()->user()->id;
+
+    $community = new Community;
+    $community->name = $validatedData['name'];
+    $community->description = $validatedData['description'];
+    $community->image_url = $validatedData['image_url'];
+    $community->admin_id = $adminId;
+    $community->visibility = 'public'; 
+    $community->save();
+
+    return response()->json(['message' => 'Community created successfully']);
+}
+
+public function addAdmin(Community $community, Request $request)
+{
+    // Assuming you have authenticated the user and obtained their ID
+    $userId = auth()->user()->id;
+
+    // Check if the user is already an admin of the community
+    if (!$community->admins->contains($userId)) {
+        // Attach the user as an admin of the community
+        $community->admins()->attach($userId);
+
+        return response()->json(['message' => 'User added as an admin'], 200);
+    } else {
+        return response()->json(['message' => 'User is already an admin'], 400);
+    }
 }
 
 }

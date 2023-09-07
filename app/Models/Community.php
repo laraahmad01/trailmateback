@@ -20,5 +20,9 @@ class Community extends Model
     {
         return $this->hasMany(CommunityMember::class);
     }
+    public function admins(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'community_admins', 'community_id', 'admin_id');
+    }
 
 }
