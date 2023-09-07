@@ -9,6 +9,9 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\TrailsHistoryController;
+use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\ListOfCollectionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -56,3 +59,16 @@ Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost'
 Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
 Route::post('comments/{postId}', [CommentController::class, 'addComment']);
 Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
+
+Route::get('/collections', [CollectionController::class, 'index']);
+Route::get('/collections/{id}', [CollectionController::class, 'show']);
+Route::post('/collections', [CollectionController::class, 'store']);
+Route::put('/collections/{id}', [CollectionController::class, 'update']);
+Route::delete('/collections/{id}', [CollectionController::class, 'destroy']);
+
+Route::get('/trail-history', [TrailsHistoryController::class, 'index']);
+Route::get('/trail-history/{id}', [TrailsHistoryController::class, 'show']);
+Route::post('/trail-history', [TrailsHistoryController::class, 'store']);
+Route::put('/trail-history/{id}', [TrailsHistoryController::class, 'update']);
+Route::delete('/trail-history/{id}', [TrailsHistoryController::class, 'destroy']);
+

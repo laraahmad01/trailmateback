@@ -57,7 +57,16 @@ class User extends Authenticatable
     public function comments() {
         return $this->hasMany(Comment::class);
     }
-    public function adminCommunities(): BelongsToMany
+    public function collections()
+    {
+        return $this->hasMany(Collection::class);
+    }
+
+    public function hikingHistory()
+    {
+        return $this->hasMany(HikingHistory::class);
+    }
+    public function adminCommunities()
     {
         return $this->belongsToMany(Community::class, 'community_admins', 'admin_id', 'community_id');
     }
