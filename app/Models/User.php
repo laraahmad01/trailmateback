@@ -57,5 +57,14 @@ class User extends Authenticatable
     public function comments() {
         return $this->hasMany(Comment::class);
     }
+    public function collections()
+    {
+        return $this->hasMany(Collection::class);
+    }
+    
+    public function hikingHistory()
+    {
+        return $this->hasMany(HikingHistory::class);
+    }
     
 }
