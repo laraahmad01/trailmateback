@@ -61,11 +61,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Collection::class);
     }
-    
+
     public function hikingHistory()
     {
         return $this->hasMany(HikingHistory::class);
-    public function adminCommunities(): BelongsToMany
+    }
+    public function adminCommunities()
     {
         return $this->belongsToMany(Community::class, 'community_admins', 'admin_id', 'community_id');
     }
