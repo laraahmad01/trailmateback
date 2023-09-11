@@ -21,18 +21,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('register', [AuthController::class, 'register'])->name('register');
 
-Route::post('createuser', [UserController::class, 'create'])->name('createuser');
-Route::get('users/{id}', [UserController::class, 'getUser']);
-Route::get('users', [UserController::class, 'getAllUsers']);
+// Route::post('createuser',[UserController::class,'create'])->name('createuser');
+// Route::get('users/{id}', [UserController::class, 'getUser']);
+// Route::get('users', [UserController::class, 'getAllUsers']);
 
+// Route::post('/communities/create', [CommunityController::class, 'create']);
+// Route::get('/communities', [CommunityController::class, 'index']);
+// Route::post('/communities', [CommunityController::class, 'store']);
+// Route::get('/communities/{id}', [CommunityController::class, 'show']);
+// Route::put('/communities/{id}', [CommunityController::class, 'update']);
+// Route::delete('/communities/{id}', [CommunityController::class, 'destroy']);
+// Route::delete('communities/{communityId}', [CommunityController::class, 'deleteCommunity']);
+// Route::get('community/{communityId}/members/count', [CommunityController::class, 'getMembersCountForCommunity']);
 Route::post('/communities/create', [CommunityController::class, 'create']);
 Route::get('/communities', [CommunityController::class, 'index']);
 Route::post('/communities', [CommunityController::class, 'store']);
 Route::get('/communities/{id}', [CommunityController::class, 'show']);
-Route::put('/communities/{id}', [CommunityController::class, 'update']);
-Route::delete('/communities/{id}', [CommunityController::class, 'destroy']);
-Route::delete('communities/{communityId}', [CommunityController::class, 'deleteCommunity']);
+Route::post('/communities/update/{id}', [CommunityController::class, 'update']);
+Route::delete('/communities/delete/{id}', [CommunityController::class, 'destroy']);
 Route::get('community/{communityId}/members/count', [CommunityController::class, 'getMembersCountForCommunity']);
+Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
 
 Route::get('/communities/{communityId}/members', [CommunityMemberController::class, 'index']);
 Route::post('/communities/{communityId}/members', [CommunityMemberController::class, 'store']);
@@ -40,26 +48,43 @@ Route::get('/communities/{communityId}/members/{memberId}', [CommunityMemberCont
 Route::put('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'update']);
 Route::delete('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
 Route::get('community/{communityId}/members/names', [CommunityMemberController::class, 'getMembersNames']);
-Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
+Route::post('/communitymembers/add', [CommunityMemberController::class, 'addMembersToCommunity']);
+Route::get('/communitymembers/{communityId}', [CommunityMemberController::class, 'getCommunityMembers']);
 
+// Route::get('/communities/{communityId}/members', [CommunityMemberController::class, 'index']);
+// Route::post('/communities/{communityId}/members', [CommunityMemberController::class, 'store']);
+// Route::get('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'show']);
+// Route::put('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'update']);
+// Route::delete('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
+// Route::get('community/{communityId}/members/names', [CommunityMemberController::class, 'getMembersNames']);
+// Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
+
+// Route::get('/posts', [PostController::class, 'index']);
+// Route::post('/posts', [PostController::class, 'store']);
+// Route::get('/posts/{id}', [PostController::class, 'show']);
+// Route::put('/posts/{id}', [PostController::class, 'update']);
+// Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+// Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
+// Route::get('post/{postId}/comments/count', [PostController::class, 'getCommentsCountForPost']);
+// Route::get('post/{postId}/likes/count', [PostController::class, 'getLikesCountForPost']);
 Route::get('/posts', [PostController::class, 'index']);
-Route::post('/posts', [PostController::class, 'store']);
+Route::post('/posts/create', [PostController::class, 'store']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
-Route::put('/posts/{id}', [PostController::class, 'update']);
-Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+Route::post('/posts/update/{id}', [PostController::class, 'update']);
+Route::delete('/posts/delete/{id}', [PostController::class, 'destroy']);
 Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
 Route::get('post/{postId}/comments/count', [PostController::class, 'getCommentsCountForPost']);
 Route::get('post/{postId}/likes/count', [PostController::class, 'getLikesCountForPost']);
 
-Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
-Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);
-Route::delete('/likes/{postId}/{likeId}', [LikeController::class, 'removeLikeFromPost']);
-Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']);
+// Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
+// Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);
+// Route::delete('/likes/{postId}/{likeId}', [LikeController::class, 'removeLikeFromPost']);
+// Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']);
 
-Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
-Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
-Route::post('comments/{postId}', [CommentController::class, 'addComment']);
-Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
+// Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
+// Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
+// Route::post('comments/{postId}', [CommentController::class, 'addComment']);
+// Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/collection', [CollectionController::class, 'index']);
