@@ -9,6 +9,7 @@ class TrailsHistory extends Model
 {
     use HasFactory;
 
+    protected $table = 'trails_histories';
     public function user()
     {
         return $this->belongsTo(User::class);

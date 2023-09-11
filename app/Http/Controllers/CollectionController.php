@@ -5,25 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
 use App\Models\Trail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class CollectionController extends Controller
 {
-    public function index(){
-        $user = auth()->user();
-        $collections = $user->collections;
-
-        return response()->json(['collections' => $collections]);
+    public function index()
+    {
+        $user = Auth::user();
+        $collection = $user->collection;
+        
+        return response()->json(['collection' => $collection]);
     }
 
     public function show($id)
     {
         $collection = Collection::findOrFail($id);
-
-        // if (!$collection->user->is(auth()->user())) {
-        //     return response()->json(['error' => 'Unauthorized'], 403);
-        // }
-
         return response()->json(['collection' => $collection]);
     }
 
@@ -36,7 +33,7 @@ class CollectionController extends Controller
 
         $collection = new Collection();
         $collection->name = $data['name'];
-        $collection->user_id = auth()->id();
+        $collection->user_id = Auth::id();
         $collection->save();
 
         return response()->json(['collection' => $collection], 201);
@@ -46,7 +43,7 @@ class CollectionController extends Controller
     {
         $collection = Collection::findOrFail($id);
 
-        if (!$collection->user->is(auth()->user())) {
+        if (!$collection->user->is(Auth::user())) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -65,7 +62,7 @@ class CollectionController extends Controller
     {
         $collection = Collection::findOrFail($id);
 
-        if (!$collection->user->is(auth()->user())) {
+        if (!$collection->user->is(Auth::user())) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -74,16 +71,21 @@ class CollectionController extends Controller
         return response()->json(['message' => 'Collection deleted']);
     }
 
-    public function addTrailToCollection($collectionId, $trailId)
+    public function addTrailToCollection($id, $trailId)
     {
-        $collection = Collection::findOrFail($collectionId);
+        $collection = Collection::findOrFail($id);
         $trail = Trail::findOrFail($trailId);
 
         $collection->trails()->attach($trail->id);
 
-        // You can also use detach to remove a trail from a collection:
-        // $collection->trails()->detach($trail->id);
-
         return response()->json(['message' => 'Trail added to collection successfully']);
+    }
+
+    public function getCollectionTrails($id)
+    {
+        $collection = Collection::findOrFail($id);
+        $trail = $collection->trail;
+
+        return response()->json(['trail' => $trail]);
     }
 }
