@@ -12,12 +12,19 @@ class CommentController extends Controller
 {
     public function getCommentsForPost($postId)
     {
+        try{
         $comments = Comment::where('post_id', $postId)->get();
 
-        return response()->json($comments);
+        return response()->json($comments);}
+        catch (\Exception $e) {
+            // Log the error for debugging purposes
+            Log::error('Error fetching community posts:', ['error' => $e->getMessage()]);
+    
+            // Return an error response
+            return response()->json(['error' => 'An error occurred while fetching community posts.'], 500);
+        }
     }
-
-
+    
     public function getCommentsName($postId)
 {
     try {
@@ -71,7 +78,7 @@ public function deleteComment($commentId)
         $userId = $request->user_id;
         
         $comment = new Comment();
-        $comment->user_id = $userId;
+        $comment->user_id = 1;
         $comment->post_id = $postId;
         $comment->content = $request->input('content'); // Assuming you send the comment content in the request
         

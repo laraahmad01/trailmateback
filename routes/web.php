@@ -59,7 +59,7 @@ Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']
 Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
 Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
 Route::post('comments/{postId}', [CommentController::class, 'addComment']);
-Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
+Route::delete('comments/delete/{commentId}', [CommentController::class, 'deleteComment']);
 
 Route::get('/collections', [CollectionController::class, 'index']);
 Route::get('/collections/{id}', [CollectionController::class, 'show']);
