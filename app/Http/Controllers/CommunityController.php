@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Community;
 use App\Models\User;
+use App\Models\CommunityMember;
 
 
 class CommunityController extends Controller
@@ -16,10 +17,10 @@ class CommunityController extends Controller
         return response()->json($communities);
     }
 
-    public function store(Request $request)
+    public function formSubmit(Request $request)
     {
-        $community = Community::create($request->all());
-        return response()->json($community, 201);
+      //  $community = Community::create($request->all());
+      return response()->json([$request->all()]);
     }
 
     public function show($id)
@@ -30,9 +31,24 @@ class CommunityController extends Controller
 
     public function update(Request $request, $id)
     {
-        $community = Community::findOrFail($id);
-        $community->update($request->all());
-        return response()->json($community, 200);
+        // Validate the incoming request data (you can adjust validation rules)
+       // $request->validate([
+         //   'description' => 'required|string|max:255', // Adjust validation rules as needed
+        //]);
+    
+        try {
+            $community = Community::findOrFail($id);
+    
+            // You can update only the fields that need to be updated
+            $community->name = $request->input('name');
+            $community->description = $request->input('description');
+            // Save the updated post
+            $community->save();
+    
+            return response()->json(['message' => 'Community updated successfully', 'community' => $community]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error updating post', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy($id)
@@ -42,31 +58,31 @@ class CommunityController extends Controller
         return response()->json(null, 204);
     }
 
-    public function deleteCommunity($communityId)
-    {
-        // Find the community
-        $community = Community::find($communityId);
+    public function delete($id)
+{
+    try {
+        $community = Community::findOrFail($id);
 
-        if (!$community) {
-            return response()->json(['error' => 'Community not found'], 404);
+        // Delete related records (likes and comments)
+        foreach ($community->posts as $post) {
+            $post->likes()->delete();
+            $post->comments()->delete();
         }
 
-        // Delete likes and comments related to posts in this community
-        $postIds = $community->posts->pluck('id')->toArray();
-        Like::whereIn('post_id', $postIds)->delete();
-        Comment::whereIn('post_id', $postIds)->delete();
+        // Delete posts
+        $community->posts()->delete();
 
-        // Delete posts in this community
-        Post::where('community_id', $communityId)->delete();
-
-        // Delete members in this community
-        CommunityMember::where('community_id', $communityId)->delete();
+        // Delete members
+        $community->members()->delete();
 
         // Delete the community itself
         $community->delete();
 
-        return response()->json(['message' => 'Community and related records deleted']);
+        return response()->json(['message' => 'Community and related records deleted successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error deleting community', 'error' => $e->getMessage()], 500);
     }
+}
 
     public function getMembersCountForCommunity($communityId)
 {
@@ -82,20 +98,32 @@ public function create(Request $request)
         'name' => 'required|string|max:255',
         'description' => 'nullable|string',
         'image_url' => 'nullable|string', 
+        'admin_id' => 'nullable|integer', // Use 'integer' instead of 'number'
+        'visibility' => 'nullable|string',
     ]);
 
-    $adminId = auth()->user()->id;
+    $adminId = 1; // You can use auth()->user()->id if needed
 
+    // Create the community
     $community = new Community;
-    $community->name = $validatedData['name'];
-    $community->description = $validatedData['description'];
-    $community->image_url = $validatedData['image_url'];
+    $community->name = $request->input('name');
+    $community->description = $request->input('description');
+    $community->image_url = '12345';
     $community->admin_id = $adminId;
     $community->visibility = 'public'; 
     $community->save();
 
-    return response()->json(['message' => 'Community created successfully']);
+    // Create the community member record for the admin
+    $communityMember = new CommunityMember;
+    $communityMember->community_id = $community->id;
+    $communityMember->member_id = $adminId;
+    $communityMember->is_admin = 1; // Admin status
+    $communityMember->muted = 0;    // Not muted
+    $communityMember->save();
+
+    return response()->json(['message' => 'Community created successfully', 'community' => $community]);
 }
+
 
 public function addAdmin(Community $community, Request $request)
 {

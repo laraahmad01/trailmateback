@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Community extends Model
 {
     use HasFactory;
-    public function members()
-    {
-        return $this->belongsToMany(User::class, 'community_members', 'community_id', 'member_id');
-    }
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function members()
+    {
+        return $this->hasMany(CommunityMember::class);
     }
     public function memberss()
     {
