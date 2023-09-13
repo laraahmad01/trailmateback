@@ -11,21 +11,22 @@ class TrailsHistoryController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $trailHistory = $user->TrailsHistory()->paginate(10); // Adjust the pagination as needed
+        // $trailsHistory = $user->TrailsHistory()->paginate(10); // Adjust the pagination as needed
+        $trailsHistory = TrailsHistory::with('trail')->get();
 
-        return response()->json(['trail_history' => $trailHistory]);
+        return response()->json(['trails_history' => $trailsHistory]);
     }
 
     public function show($id)
     {
-        $trailHistory = TrailsHistory::findOrFail($id);
+        $trailsHistory = TrailsHistory::findOrFail($id);
 
         // Check if the history entry belongs to the authenticated user
-        if (!$trailHistory->user->is(auth()->user())) {
+        if (!$trailsHistory->user->is(auth()->user())) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        return response()->json(['trail_history' => $trailHistory]);
+        return response()->json(['trails_history' => $trailsHistory]);
     }
 
     public function store(Request $request)
@@ -35,21 +36,21 @@ class TrailsHistoryController extends Controller
             'hike_date' => 'required|date',
         ]);
 
-        $trailHistory = new TrailsHistory();
-        $trailHistory->user_id = auth()->id();
-        $trailHistory->trail_id = $data['trail_id'];
-        $trailHistory->hike_date = $data['hike_date'];
-        $trailHistory->save();
+        $trailsHistory = new TrailsHistory();
+        $trailsHistory->user_id = auth()->id();
+        $trailsHistory->trail_id = $data['trail_id'];
+        $trailsHistory->hike_date = $data['hike_date'];
+        $trailsHistory->save();
 
-        return response()->json(['trail_history' => $trailHistory], 201);
+        return response()->json(['trails_history' => $trailsHistory], 201);
     }
 
     public function update(Request $request, $id)
     {
-        $trailHistory = TrailsHistory::findOrFail($id);
+        $trailsHistory = TrailsHistory::findOrFail($id);
 
         // Check if the history entry belongs to the authenticated user
-        if (!$trailHistory->user->is(auth()->user())) {
+        if (!$trailsHistory->user->is(auth()->user())) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -57,22 +58,22 @@ class TrailsHistoryController extends Controller
             'hike_date' => 'required|date',
         ]);
 
-        $trailHistory->hike_date = $data['hike_date'];
-        $trailHistory->save();
+        $trailsHistory->hike_date = $data['hike_date'];
+        $trailsHistory->save();
 
-        return response()->json(['trail_history' => $trailHistory]);
+        return response()->json(['trails_history' => $trailsHistory]);
     }
 
     public function destroy($id)
     {
-        $trailHistory = TrailsHistory::findOrFail($id);
+        $trailsHistory = TrailsHistory::findOrFail($id);
 
         // Check if the history entry belongs to the authenticated user
-        if (!$trailHistory->user->is(auth()->user())) {
+        if (!$trailsHistory->user->is(auth()->user())) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $trailHistory->delete();
+        $trailsHistory->delete();
 
         return response()->json(['message' => 'Trail history entry deleted']);
     }

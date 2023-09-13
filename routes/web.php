@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\TrailsHistoryController;
 use App\Http\Controllers\CollectionController;
-use App\Http\Controllers\ListOfCollectionController;
+use App\Http\Controllers\TrailController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -47,22 +48,19 @@ Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::post('/posts/update/{id}', [PostController::class, 'update']);
 Route::delete('/posts/delete/{id}', [PostController::class, 'destroy']);
 Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
-
-Route::get('likes/{postId}/data', [LikeController::class, 'getPostLikes']);
-Route::get('likes/count/{postId}', [LikeController::class, 'countLikes']);
-Route::delete('likes/delete/{postId}', [LikeController::class, 'deleteLike']);
-Route::post('likes/add', [LikeController::class, 'addLike']);
-Route::get('posts/{post_id}/likes/{user_id}', [LikeController::class,'getLikesByUserAndPost']);
-Route::get('check/{post_id}/likes/{user_id}', [LikeController::class,'checkIfUserLikedPost']);
+Route::get('post/{postId}/comments/count', [PostController::class, 'getCommentsCountForPost']);
+Route::get('post/{postId}/likes/count', [PostController::class, 'getLikesCountForPost']);
 
 
+Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
+Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);
+Route::delete('/likes/{postId}/{likeId}', [LikeController::class, 'removeLikeFromPost']);
+Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']);
 
 Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
-Route::get('comments/{postId}/data', [CommentController::class, 'getPostComments']);
-Route::post('comments/add', [CommentController::class, 'addComment']);
-Route::delete('comments/delete/{commentId}', [CommentController::class, 'deleteComment']);
-Route::get('comments/count/{postId}', [CommentController::class, 'countComments']);
-
+Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
+Route::post('comments/{postId}', [CommentController::class, 'addComment']);
+Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
 
 Route::get('/collections', [CollectionController::class, 'index']);
 Route::get('/collections/{id}', [CollectionController::class, 'show']);

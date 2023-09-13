@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('trail_id');
             $table->timestamps();
 
-            $table->foreign('collection_id')->references('id')->on('collections');
-            $table->foreign('trail_id')->references('id')->on('trails');
+            $table->foreign('collection_id')->references('id')->on('collection');
+            $table->foreign('trail_id')->references('id')->on('trail');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('collection_list');
+        Schema::dropIfExists('collection_trails');
     }
 };

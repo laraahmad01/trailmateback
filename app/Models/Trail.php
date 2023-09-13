@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Trail extends Model
 {
     use HasFactory;
-
-    public function collections()
+    protected $table = 'trail';
+    public function collection()
     {
         return $this->belongsToMany(Collection::class, 'collection_trails');
     }
