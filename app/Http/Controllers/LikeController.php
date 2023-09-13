@@ -26,7 +26,7 @@ public function deleteLike($postId)
     try {
         // Get the authenticated user's ID
         // $userId = Auth::id();
-        $userId = 1;
+        $userId =  Auth::id();
 
         // Find the like record based on the post_id and user_id
         $like = Like::where('post_id', $postId)
@@ -60,7 +60,7 @@ public function addLike(Request $request)
     {
         try {
             // Assuming you pass user_id and post_id in the request
-            $userId = $request->user_id;
+            $userId =  Auth::id();
             $postId = $request->input('post_id');
             
             // Check if the user has already liked the post

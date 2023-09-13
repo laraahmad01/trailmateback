@@ -93,4 +93,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("/collection/{collectionId}/trails/{trailId}", [CollectionController::class, 'addTrailToCollection']);
     Route::delete('/collection/{collectionId}/trails/{trailId}', [CollectionController::class, 'deleteTrailFromCollection']);
 
+    Route::get('users/signedin', [UserController::class, 'getSignedInUser']);
+    Route::get('users/{id}', [UserController::class, 'getUser']);
+
+
 });

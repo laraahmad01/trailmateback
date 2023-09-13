@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Community;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;  
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Http\Middleware\Authenticate;
 
 
 class PostController extends Controller
 {
-    public function index() {
-        $posts = Post::with('user:id,firstname,lastname', 'community:name')->get();
+    public function index()
+    {
+        $posts = Post::all();
         return response()->json($posts);
     }
     
@@ -19,6 +24,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         // Validate the incoming request data (you can adjust validation rules)
+        $user = Auth::user();
         $locationData = [
             'latitude' => 123.456,
             'longitude' => 789.012,
@@ -26,9 +32,9 @@ class PostController extends Controller
         ];
         $cityName = $locationData['city'];
         
-        $post = new Post;
+        $post = new Post();
         $post->community_id = $request->input('community_id');
-        $post->user_id = 3;
+        $post->user_id = 5;
         $post->image_url = null;
         $post->description = $request->input('description');
         date_default_timezone_set('Asia/Beirut');
@@ -39,6 +45,7 @@ class PostController extends Controller
         $post->save();
         return response()->json(['message' => 'post created successfully', 'post' => $post]);
     }
+
 
     public function show($id)
     {

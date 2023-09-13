@@ -102,21 +102,20 @@ public function create(Request $request)
         'visibility' => 'nullable|string',
     ]);
 
-    $adminId = 1; // You can use auth()->user()->id if needed
 
     // Create the community
     $community = new Community;
     $community->name = $request->input('name');
     $community->description = $request->input('description');
     $community->image_url = '12345';
-    $community->admin_id = $adminId;
+    $community->admin_id = Auth::id();
     $community->visibility = 'public'; 
     $community->save();
 
     // Create the community member record for the admin
     $communityMember = new CommunityMember;
     $communityMember->community_id = $community->id;
-    $communityMember->member_id = $adminId;
+    $communityMember->member_id = $community->admin_id;
     $communityMember->is_admin = 1; // Admin status
     $communityMember->muted = 0;    // Not muted
     $communityMember->save();
