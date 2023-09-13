@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('trail_id');
             $table->timestamps();
 
-            $table->foreign('collection_id')->references('id')->on('collection');
-            $table->foreign('trail_id')->references('id')->on('trail');
+            $table->foreign('collection_id')->references('id')->on('collection')->onDelete('cascade');
+            $table->foreign('trail_id')->references('id')->on('trail')->onDelete('cascade');
         });
     }
 

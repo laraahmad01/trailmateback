@@ -74,6 +74,15 @@ class AuthController extends Controller
             'code' => 401,
         ]);
     }
+    public function logout(Request $request)
+    {
+        // Revoke the current user's token, effectively logging them out
+        $request->user()->currentAccessToken()->delete();
 
+        return response()->json([
+            'message' => 'Logout successful',
+            'code' => 200,
+        ]);
+    }
 
 }

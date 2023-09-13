@@ -18,4 +18,9 @@ class Collection extends Model
     {
         return $this->belongsToMany(Trail::class, 'collection_trails', 'collection_id', 'trail_id');
     }
+
+    public function collectionTrails()
+    {
+        return $this->hasMany(CollectionTrails::class, 'collection_id');
+    }
 }

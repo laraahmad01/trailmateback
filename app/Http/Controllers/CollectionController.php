@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
+use App\Models\CollectionTrails;
 use App\Models\Trail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -71,21 +72,39 @@ class CollectionController extends Controller
         return response()->json(['message' => 'Collection deleted']);
     }
 
-    public function addTrailToCollection($id, $trailId)
+    public function addTrailToCollection($collectionId, $trailId)
     {
-        $collection = Collection::findOrFail($id);
-        $trail = Trail::findOrFail($trailId);
-
-        $collection->trails()->attach($trail->id);
+        CollectionTrails::create([
+            'collection_id' => $collectionId,
+            'trail_id' => $trailId,
+        ]);
 
         return response()->json(['message' => 'Trail added to collection successfully']);
     }
 
-    public function getCollectionTrails($id)
+
+    public function getTrailsInCollection($id)
     {
         $collection = Collection::findOrFail($id);
         $trail = $collection->trail;
 
         return response()->json(['trail' => $trail]);
+    }
+
+    public function deleteTrailFromCollection($collectionId, $trailId)
+    {
+        // Check if the specified trail is in the collection
+        $collectionTrail = CollectionTrails::where('collection_id', $collectionId)
+            ->where('trail_id', $trailId)
+            ->first();
+
+        if (!$collectionTrail) {
+            return response()->json(['error' => 'Trail not found in the collection'], 404);
+        }
+
+        // Delete the trail from the collection
+        $collectionTrail->delete();
+
+        return response()->json(['message' => 'Trail deleted from collection successfully']);
     }
 }

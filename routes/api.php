@@ -87,6 +87,8 @@ Route::get('post/{postId}/likes/count', [PostController::class, 'getLikesCountFo
 // Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::get('/collection', [CollectionController::class, 'index']);
     Route::get('/collection/{id}', [CollectionController::class, 'show']);
     Route::post('/collection', [CollectionController::class, 'store']);
@@ -102,6 +104,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/trails', [TrailController::class, 'index']);
     Route::get('/trails/{id}', [TrailController::class, 'show']);
 
-    Route::get('/collection/{id}/trails', [CollectionController::class, 'getCollectionTrails']);
+    Route::get('/collection/{id}/trails', [CollectionController::class, 'getTrailsInCollection']);
+    Route::post("/collection/{collectionId}/trails/{trailId}", [CollectionController::class, 'addTrailToCollection']);
+    Route::delete('/collection/{collectionId}/trails/{trailId}', [CollectionController::class, 'deleteTrailFromCollection']);
 
 });

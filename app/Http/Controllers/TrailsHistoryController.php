@@ -11,8 +11,9 @@ class TrailsHistoryController extends Controller
     public function index()
     {
         $user = auth()->user();
-        // $trailsHistory = $user->TrailsHistory()->paginate(10); // Adjust the pagination as needed
-        $trailsHistory = TrailsHistory::with('trail')->get();
+        $trailsHistory = TrailsHistory::where('user_id', $user->id)
+            ->with('trail')
+            ->get();
 
         return response()->json(['trails_history' => $trailsHistory]);
     }
