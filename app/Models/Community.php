@@ -17,9 +17,16 @@ class Community extends Model
     {
         return $this->hasMany(CommunityMember::class);
     }
+    public function memberss()
+    {
+        return $this->hasMany(CommunityMember::class);
+    }
     public function admins()
     {
         return $this->hasMany(CommunityMember::class)->where('is_admin', true);
     }
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
