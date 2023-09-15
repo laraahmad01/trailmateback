@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Community extends Model
 {
     use HasFactory;
-    protected $table = 'community';
+    protected $table = 'communities';
     public function posts()
     {
         return $this->hasMany(Post::class);
