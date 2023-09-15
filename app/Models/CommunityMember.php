@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class CommunityMember extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'community_id',
+        'member_id',
+        'is_admin',
+        'muted',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

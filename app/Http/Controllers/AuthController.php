@@ -85,4 +85,9 @@ class AuthController extends Controller
         ]);
     }
 
+    public function getUserId(Request $request)
+    {
+        $userId = Auth::user();
+        return response()->json(['user_id' => $userId, 'message' => 'User ID retrieved successfully']);
+    }
 }

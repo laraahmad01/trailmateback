@@ -21,9 +21,10 @@ class Community extends Model
     {
         return $this->hasMany(CommunityMember::class);
     }
-    public function admins(): BelongsToMany
+    public function admins()
     {
-        return $this->belongsToMany(User::class, 'community_admins', 'community_id', 'admin_id');
+        return $this->hasMany(CommunityMember::class)->where('is_admin', true);
     }
+
 
 }
