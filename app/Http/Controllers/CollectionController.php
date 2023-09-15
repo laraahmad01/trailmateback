@@ -7,7 +7,7 @@ use App\Models\Collection;
 use App\Models\CollectionTrails;
 use App\Models\Trail;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request;    
 
 class CollectionController extends Controller
 {

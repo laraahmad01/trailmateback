@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
+
 class Community extends Model
 {
     use HasFactory;
+    protected $table = 'community';
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -25,6 +28,5 @@ class Community extends Model
     {
         return $this->hasMany(CommunityMember::class)->where('is_admin', true);
     }
-
 
 }

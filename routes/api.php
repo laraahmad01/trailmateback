@@ -97,4 +97,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('comments/{postId}', [CommentController::class, 'addComment']);
     Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
 
+    Route::get('users/signedin', [UserController::class, 'getSignedInUser']);
+    Route::get('users/{id}', [UserController::class, 'getUser']);
+
+
 });
