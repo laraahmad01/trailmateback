@@ -14,16 +14,14 @@ class Post extends Model
         'description',
         'date',
         'location',
-        'person_tag',
     ];
 
-    // app/Models/Post.php
+    public function taggedUser()
+    {
+        return $this->belongsTo(User::class, 'person_tag', 'firstname', 'lastname');
+    }
 
-public function taggedUser()
-{
-    return $this->belongsTo(User::class, 'person_tag', 'firstname', 'lastname');
-}
-public function community()
+    public function community()
     {
         return $this->belongsTo(Community::class);
     }
@@ -42,6 +40,6 @@ public function community()
     {
         return $this->hasMany(Comment::class);
     }
-    
+
     use HasFactory;
 }

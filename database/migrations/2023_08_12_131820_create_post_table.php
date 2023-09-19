@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('description');
             $table->dateTime('date')->nullable();
             $table->json('location')->nullable();
-            $table->string('person_tag')->nullable();
             $table->timestamps();
         });
     }

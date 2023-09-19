@@ -82,16 +82,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/update/{id}', [PostController::class, 'update']);
     Route::delete('/posts/delete/{id}', [PostController::class, 'destroy']);
     Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
-    Route::get('post/{postId}/comments/count', [PostController::class, 'getCommentsCountForPost']);
-    Route::get('post/{postId}/likes/count', [PostController::class, 'getLikesCountForPost']);
 
     // Like
+    Route::get('post/{postId}/likes/count', [LikeController::class, 'countLikes']);
     Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
     Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);
     Route::delete('/likes/{postId}/{likeId}', [LikeController::class, 'removeLikeFromPost']);
     Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']);
 
     // Comment
+    Route::get('post/{postId}/comments/count', [CommentController::class, 'countComments']);
     Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
     Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
     Route::post('comments/{postId}', [CommentController::class, 'addComment']);
