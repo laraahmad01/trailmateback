@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Like;
@@ -72,25 +73,21 @@ class LikeController extends Controller
         }
     }
 
-    public function getLikesByUserAndPost($postId, $userId)
+    public function getLikesNamesForPost($postId)
     {
         try {
-            $likes = Like::where('post_id', $postId)
-                ->where('user_id', $userId)
-                ->get();
+            $likes = Like::where('post_id', $postId)->get();
+            $userNames = [];
 
-            return response()->json(['likes' => $likes]);
+            foreach ($likes as $like) {
+                $user = User::find($like->user_id);
+                if ($user) {
+                    $userNames[] = $user->firstname . ' ' . $user->lastname;
+                }
+            }
+            return response()->json(['userNames' => $userNames]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred while fetching likes.'], 500);
+            return response()->json(['error' => 'An error occurred while fetching user names.'], 500);
         }
-    }
-
-    public function checkIfUserLikedPost($userId, $postId)
-    {
-        $like = Like::where('user_id', $userId)
-            ->where('post_id', $postId)
-            ->first();
-
-        return response()->json(['liked' => $like ? true : false]);
     }
 }

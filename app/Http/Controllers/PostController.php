@@ -19,8 +19,6 @@ class PostController extends Controller
         $posts = Post::all();
         return response()->json($posts);
     }
-
-
     public function store(Request $request)
     {
         if (auth()->check()) {
@@ -48,67 +46,98 @@ class PostController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
     }
-
-
-
     public function show($id)
     {
         $post = Post::findOrFail($id);
         return response()->json($post);
     }
-
-
-    public function update(Request $request, $id)
-    {
-        // Validate the incoming request data (you can adjust validation rules)
-        // $request->validate([
-        //   'description' => 'required|string|max:255', // Adjust validation rules as needed
-        //]);
-
-        try {
-            $post = Post::findOrFail($id);
-
-            // You can update only the fields that need to be updated
-            $post->description = $request->input('description');
-
-            // Save the updated post
-            $post->save();
-
-            return response()->json(['message' => 'Post updated successfully', 'post' => $post]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error updating post', 'error' => $e->getMessage()], 500);
-        }
-    }
-
     public function destroy($id)
     {
-        // Find the post by ID
         $post = Post::find($id);
 
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
         }
 
-        // Delete related likes and comments
         $post->likes()->delete();
         $post->comments()->delete();
 
-        // Delete the post itself
         $post->delete();
 
         return response()->json(['message' => 'Post deleted successfully']);
     }
-    public function getCommunityPosts($communityId)
+    public function getCommunityPostsData($communityId)
     {
         try {
-            $posts = Post::where('community_id', $communityId)->get();
-            return response()->json($posts);
-        } catch (\Exception $e) {
-            // Log the error for debugging purposes
-            Log::error('Error fetching community posts:', ['error' => $e->getMessage()]);
+            $authenticatedUserId = auth()->user()->id;
 
-            // Return an error response
-            return response()->json(['error' => 'An error occurred while fetching community posts.'], 500);
+            $communityPostsData = Post::where('community_id', $communityId)
+                ->with('user')
+                ->leftJoin('likes', function ($join) use ($authenticatedUserId) {
+                    $join->on('posts.id', '=', 'likes.post_id')
+                        ->where('likes.user_id', '=', $authenticatedUserId);
+                })
+                ->select('posts.*', 'likes.id as liked')
+                ->withCount('likes')
+                ->withCount('comments')
+                ->get();
+
+            $community = Community::findOrFail($communityId);
+            $communityName = $community->name;
+            $adminId = $community->admin_id;
+
+            return response()->json([
+                'communityPostsData' => $communityPostsData,
+                'communityName' => $communityName,
+                'adminId' => $adminId,
+                'authenticatedUserId' => $authenticatedUserId,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching community posts data:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching community posts data.'], 500);
         }
     }
+
+    public function getUserPostsInPublicCommunities()
+    {
+        try {
+            $authenticatedUserId = auth()->user()->id;
+
+            // Get all posts of the authenticated user in public communities
+            $userPosts = Post::whereHas('community', function ($query) {
+                $query->where('is_private', false); // Only public communities
+            })
+                ->where('user_id', $authenticatedUserId)
+                ->get();
+
+            return response()->json(['userPosts' => $userPosts]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching user posts in public communities:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching user posts.'], 500);
+        }
+    }
+
+
+    public function getUserPhotosInPublicCommunities()
+    {
+        try {
+            $authenticatedUserId = auth()->user()->id;
+
+            // Get all photos posted by the authenticated user in public communities
+            $userPhotos = Post::whereHas('community', function ($query) {
+                $query->where('visibility', 'public'); // Only public communities
+            })
+                ->where('user_id', $authenticatedUserId)
+                ->whereNotNull('image_url') // Ensure there's an image URL
+                ->get();
+
+            return response()->json(['userPhotos' => $userPhotos]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching user photos in public communities:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching user photos.'], 500);
+        }
+    }
+
+
+
 }

@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // User
     Route::get('users/{id}', [UserController::class, 'getUser']);
     Route::get('users', [UserController::class, 'getAllUsers']);
+    Route::get('userInfo', [UserController::class, 'show']);
+    Route::put('userInfo', [UserController::class, 'updateUserInfo']);
 
     // Collection
     Route::get('/collection', [CollectionController::class, 'index']);
@@ -62,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/communities/{id}', [CommunityController::class, 'show']);
     Route::put('/communities/{id}', [CommunityController::class, 'update']);
     Route::delete('/communities/{id}', [CommunityController::class, 'destroy']);
-    Route::get('community/{communityId}/members/count', [CommunityController::class, 'getMembersCountForCommunity']);
+    Route::get('/communityInfo/{id}', [CommunityController::class, 'showWithMembersAndImages']);
     Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
 
     // Community Member
@@ -79,16 +81,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts/create', [PostController::class, 'store']);
     Route::get('/posts/{id}', [PostController::class, 'show']);
-    Route::post('/posts/update/{id}', [PostController::class, 'update']);
     Route::delete('/posts/delete/{id}', [PostController::class, 'destroy']);
-    Route::get('community/{communityId}/posts', [PostController::class, 'getCommunityPosts']);
+    Route::get('community/{communityId}/postsData', [PostController::class, 'getCommunityPostsData']);
+
+    // Profile
+    Route::get('/user/posts', [PostController::class, 'getUserPostsInPublicCommunities']);
+    Route::get('/user/photos', [PostController::class, 'getUserPhotosInPublicCommunities']);
 
     // Like
     Route::get('post/{postId}/likes/count', [LikeController::class, 'countLikes']);
-    Route::get('/likes/{postId}', [LikeController::class, 'getLikesForPost']);
-    Route::post('/likes/{postId}', [LikeController::class, 'addLikeToPost']);
-    Route::delete('/likes/{postId}/{likeId}', [LikeController::class, 'removeLikeFromPost']);
-    Route::get('post/{postId}/likes/names', [LikeController::class, 'getLikesNames']);
+    Route::post('/likes/{postId}', [LikeController::class, 'addLike']);
+    Route::delete('/likes/{postId}', [LikeController::class, 'deleteLike']);
+    Route::get('/likes/{postId}/names', [LikeController::class, 'getLikesNamesForPost']);
 
     // Comment
     Route::get('post/{postId}/comments/count', [CommentController::class, 'countComments']);
@@ -96,9 +100,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
     Route::post('comments/{postId}', [CommentController::class, 'addComment']);
     Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
-
-    Route::get('users/signedin', [UserController::class, 'getSignedInUser']);
-    Route::get('users/{id}', [UserController::class, 'getUser']);
-
 
 });

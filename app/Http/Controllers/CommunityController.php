@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Community;
@@ -31,17 +32,21 @@ class CommunityController extends Controller
 
     public function update(Request $request, $id)
     {
-        try {
-            $community = Community::findOrFail($id);
+        $community = Community::findOrFail($id);
 
-            $community->name = $request->input('name');
-            $community->description = $request->input('description');
-            $community->save();
-
-            return response()->json(['message' => 'Community updated successfully', 'community' => $community]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error updating post', 'error' => $e->getMessage()], 500);
+        if ($community->admin_id !== auth()->user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
+
+        $validatedData = $request->validate([
+            'name' => 'string|max:255',
+            'description' => 'string|max:255',
+            'image_url' => 'nullable|string',
+        ]);
+
+        $community->update($validatedData);
+
+        return response()->json(['message' => 'Community updated successfully', 'community' => $community], 200);
     }
 
     public function destroy($id)
@@ -77,14 +82,6 @@ class CommunityController extends Controller
         }
     }
 
-    public function getMembersCountForCommunity($communityId)
-    {
-        $community = Community::findOrFail($communityId);
-        $membersCount = $community->memberss()->count();
-
-        return response()->json(['count' => $membersCount]);
-    }
-
     public function create(Request $request)
     {
         $validatedData = $request->validate([
@@ -99,19 +96,25 @@ class CommunityController extends Controller
         $community = new Community;
         $community->name = $validatedData['name'];
         $community->description = $validatedData['description'];
-        $community->image_url = $validatedData['image_url'] ?? null; 
+        $community->image_url = $validatedData['image_url'] ?? null;
+        \Log::info('Image URL: ' . $community->image_url);
+
         $community->admin_id = $adminId;
-        $community->visibility = $validatedData['visibility'] ?? 'public'; 
+        $community->visibility = $validatedData['visibility'] ?? 'public';
         $community->save();
 
         $communityMember = new CommunityMember;
         $communityMember->community_id = $community->id;
         $communityMember->member_id = $adminId;
-        $communityMember->is_admin = 1; 
+        $communityMember->is_admin = 1;
         $communityMember->muted = 0;
         $communityMember->save();
 
-        return response()->json(['message' => 'Community created successfully', 'community' => $community]);
+        return response()->json([
+            'message' => 'Community created successfully',
+            'community' => $community,
+            'image_url' => $community->image_url,
+        ]);
     }
 
     public function addAdmin(Community $community, Request $request)
@@ -138,6 +141,32 @@ class CommunityController extends Controller
         })->get();
 
         return response()->json($userCommunities);
+    }
+
+    public function showWithMembersAndImages($id)
+    {
+        try {
+            // Get community data
+            $community = Community::findOrFail($id);
+
+            // Get the count of community members
+            $membersCount = CommunityMember::where('community_id', $id)->count();
+
+            // Get images uploaded in posts associated with this community
+            $images = Post::where('community_id', $id)
+                ->whereNotNull('image_url')
+                ->pluck('image_url')
+                ->toArray();
+
+            return response()->json([
+                'community' => $community,
+                'members_count' => $membersCount,
+                'images' => $images,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching community data:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching community data.'], 500);
+        }
     }
 
 

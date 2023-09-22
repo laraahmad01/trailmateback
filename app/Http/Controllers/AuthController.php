@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 
 class AuthController extends Controller
@@ -38,7 +39,6 @@ class AuthController extends Controller
             'code' => 201,
             'token' => $token,
         ]);
-
     }
 
     public function login(Request $request)
