@@ -13,6 +13,7 @@ use App\Http\Controllers\TrailsHistoryController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\TrailController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfilePostController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -68,14 +69,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
 
     // Community Member
-    Route::get('/communities/{communityId}/members', [CommunityMemberController::class, 'index']);
-    Route::post('/communities/{communityId}/members', [CommunityMemberController::class, 'store']);
     Route::get('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'show']);
     Route::put('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'update']);
     Route::delete('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
-    Route::get('community/{communityId}/members/names', [CommunityMemberController::class, 'getMembersNames']);
-    Route::post('/communitymembers/add', [CommunityMemberController::class, 'addMembersToCommunity']);
-    Route::get('/communitymembers/{communityId}', [CommunityMemberController::class, 'getCommunityMembers']);
+    Route::get('communities/{communityId}/members', [CommunityMemberController::class, 'getMembersInfo']);
+    Route::post('communities/{communityId}/add', [CommunityMemberController::class, 'addMembersToCommunity']);
 
     // Post 
     Route::get('/posts', [PostController::class, 'index']);
@@ -84,9 +82,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/posts/delete/{id}', [PostController::class, 'destroy']);
     Route::get('community/{communityId}/postsData', [PostController::class, 'getCommunityPostsData']);
 
-    // Profile
-    Route::get('/user/posts', [PostController::class, 'getUserPostsInPublicCommunities']);
-    Route::get('/user/photos', [PostController::class, 'getUserPhotosInPublicCommunities']);
+    // User Photos
+    Route::get('/profile/photos', [ProfilePostController::class, 'showUserPhotos']);
+    Route::post('/profile/photos', [ProfilePostController::class, 'storePhoto']);
 
     // Like
     Route::get('post/{postId}/likes/count', [LikeController::class, 'countLikes']);
