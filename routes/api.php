@@ -81,6 +81,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::delete('/posts/delete/{id}', [PostController::class, 'destroy']);
     Route::get('community/{communityId}/postsData', [PostController::class, 'getCommunityPostsData']);
+    Route::get('community/postsData', [PostController::class, 'getPublicPostsData']);
+
 
     // User Photos
     Route::get('/profile/photos', [ProfilePostController::class, 'showUserPhotos']);

@@ -38,6 +38,9 @@ class PostController extends Controller
             $post->date = now();
             $post->location = json_encode($locationData);
 
+            // Add the "public" attribute based on the request
+            $post->public = $request->input('public', true); // Default to true if not specified
+
             $post->save();
 
             return response()->json(['message' => 'post created successfully', 'post' => $post]);
@@ -46,6 +49,7 @@ class PostController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
     }
+
     public function show($id)
     {
         $post = Post::findOrFail($id);
@@ -138,6 +142,31 @@ class PostController extends Controller
         }
     }
 
+    public function getPublicPostsData()
+    {
+        try {
+            // Get the authenticated user's ID
+            $authenticatedUserId = Auth::id();
 
+            $publicPostsData = Post::where('public', true)
+                ->with('user')
+                ->leftJoin('likes', function ($join) {
+                    $join->on('posts.id', '=', 'likes.post_id');
+                })
+                ->select('posts.*', 'likes.id as liked')
+                ->withCount('likes')
+                ->withCount('comments')
+                ->get();
+
+            return response()->json([
+                'publicPostsData' => $publicPostsData,
+                'authenticatedUserId' => $authenticatedUserId,
+                // Include the authenticated user's ID
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching public posts data:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching public posts data.'], 500);
+        }
+    }
 
 }

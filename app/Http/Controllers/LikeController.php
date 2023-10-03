@@ -82,12 +82,18 @@ class LikeController extends Controller
             foreach ($likes as $like) {
                 $user = User::find($like->user_id);
                 if ($user) {
-                    $userNames[] = $user->firstname . ' ' . $user->lastname;
+                    $userNames[] = [
+                        'name' => $user->firstname . ' ' . $user->lastname,
+                        'image_url' => $user->image_url,
+                        // Include the image_url in the response
+                    ];
                 }
             }
+
             return response()->json(['userNames' => $userNames]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred while fetching user names.'], 500);
+            return response()->json(['error' => 'An error occurred while fetching user names and image URLs.'], 500);
         }
     }
+
 }
