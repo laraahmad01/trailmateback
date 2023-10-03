@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Community;
@@ -49,31 +50,24 @@ class CommunityController extends Controller
         return response()->json(['message' => 'Community updated successfully', 'community' => $community], 200);
     }
 
-    public function destroy($id)
-    {
-        $community = Community::findOrFail($id);
-        $community->delete();
-        return response()->json(null, 204);
-    }
-
     public function delete($id)
     {
         try {
+            $user = Auth::user();
+
             $community = Community::findOrFail($id);
 
-            // Delete related records (likes and comments)
+            if ($user->id !== $community->admin_id) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
             foreach ($community->posts as $post) {
                 $post->likes()->delete();
                 $post->comments()->delete();
             }
 
-            // Delete posts
             $community->posts()->delete();
-
-            // Delete members
             $community->members()->delete();
-
-            // Delete the community itself
             $community->delete();
 
             return response()->json(['message' => 'Community and related records deleted successfully']);
@@ -81,6 +75,7 @@ class CommunityController extends Controller
             return response()->json(['message' => 'Error deleting community', 'error' => $e->getMessage()], 500);
         }
     }
+
 
     public function create(Request $request)
     {

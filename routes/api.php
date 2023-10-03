@@ -64,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/communities', [CommunityController::class, 'store']);
     Route::get('/communities/{id}', [CommunityController::class, 'show']);
     Route::put('/communities/{id}', [CommunityController::class, 'update']);
-    Route::delete('/communities/{id}', [CommunityController::class, 'destroy']);
+    Route::delete('/communities/{id}', [CommunityController::class, 'delete']);
     Route::get('/communityInfo/{id}', [CommunityController::class, 'showWithMembersAndImages']);
     Route::post('/communities/{community}/admins', [CommunityController::class, 'addAdmin']);
 
@@ -83,7 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('community/{communityId}/postsData', [PostController::class, 'getCommunityPostsData']);
     Route::get('community/postsData', [PostController::class, 'getPublicPostsData']);
 
-
     // User Photos
     Route::get('/profile/photos', [ProfilePostController::class, 'showUserPhotos']);
     Route::post('/profile/photos', [ProfilePostController::class, 'storePhoto']);
@@ -96,9 +95,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Comment
     Route::get('post/{postId}/comments/count', [CommentController::class, 'countComments']);
-    Route::get('/comments/{postId}', [CommentController::class, 'getCommentsForPost']);
-    Route::get('comments/{postId}/data', [CommentController::class, 'getCommentsName']);
-    Route::post('comments/{postId}', [CommentController::class, 'addComment']);
-    Route::delete('comments/{commentId}', [CommentController::class, 'deleteComment']);
+    Route::get('post/{postId}/comments', [CommentController::class, 'getCommentsWithUserInfo']);
+    Route::post('post/{postId}/comments', [CommentController::class, 'store']);
+    Route::delete('post/{postId}/comments/{commentId}', [CommentController::class, 'destroy']);
 
 });

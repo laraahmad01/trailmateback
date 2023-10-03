@@ -73,20 +73,20 @@ class CommunityMemberController extends Controller
         return response()->json(['message' => 'Members added successfully']);
     }
 
-
     public function getMembersInfo($communityId)
     {
         try {
-            $membersNames = DB::table('community_members')
+            $membersInfo = DB::table('community_members')
                 ->join('users', 'users.id', '=', 'community_members.member_id')
                 ->where('community_members.community_id', $communityId)
-                ->select('users.firstname', 'users.lastname')
+                ->select('users.id', 'users.firstname', 'users.lastname', 'users.image_url')
                 ->get();
 
-            return response()->json($membersNames);
+            return response()->json($membersInfo);
         } catch (\Exception $e) {
-            Log::error('Error fetching members names:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while fetching member names.'], 500);
+            Log::error('Error fetching members info:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching member info.'], 500);
         }
     }
+
 }

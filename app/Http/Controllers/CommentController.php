@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Models\Comment;
@@ -10,70 +11,49 @@ use Illuminate\Validation\ValidationException;
 
 class CommentController extends Controller
 {
-    public function getCommentsForPost($postId)
-    {
-        try {
-            $comments = Comment::where('post_id', $postId)->get();
-            return response()->json($comments);
-        } catch (\Exception $e) {
-            Log::error('Error fetching community posts:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while fetching community posts.'], 500);
-        }
-    }
-
-    public function getPostComments($postId)
-    {
-        try {
-            $comments = Comment::where('post_id', $postId)->get();
-            return response()->json($comments);
-        } catch (\Exception $e) {
-            Log::error('Error fetching post comments:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while fetching post comments.'], 500);
-        }
-    }
-
-    public function deleteComment($commentId)
-    {
-        try {
-            $comment = Comment::find($commentId);
-
-            if (!$comment) {
-                return response()->json(['message' => 'Comment not found'], 404);
-            }
-
-            $comment->delete();
-
-            return response()->json(['message' => 'Comment deleted successfully']);
-        } catch (\Exception $e) {
-            Log::error('Error deleting comment:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while deleting a comment.'], 500);
-        }
-    }
-
-    public function addComment(Request $request)
-    {
-        try {
-            $userId = $request->user_id;
-
-            $comment = new Comment;
-            $comment->user_id = $userId;
-            $comment->post_id = $request->input('post_id');
-            $comment->content = $request->input('content');
-            date_default_timezone_set('Asia/Beirut');
-            $comment->created_at = date('Y-m-d H:i:s');
-
-            $comment->save();
-
-            return response()->json(['message' => 'Comment added successfully', 'comment' => $comment]);
-        } catch (\Exception $e) {
-            Log::error('Error adding comment:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while adding a comment.'], 500);
-        }
-    }
-
     public function countComments($postId)
     {
         $commentCount = Comment::where('post_id', $postId)->count();
         return response()->json(['count' => $commentCount]);
     }
+
+    public function getCommentsWithUserInfo($postId)
+    {
+        $comments = Comment::where('post_id', $postId)
+            ->with(['user:id,firstname,lastname,image_url'])
+            ->get();
+
+        $authUser = Auth::user();
+
+        return response()->json(['comments' => $comments, 'authUser' => $authUser]);
+    }
+
+    public function store(Request $request, $postId)
+    {
+        $validatedData = $request->validate([
+            'content' => 'required|string|max:255',
+        ]);
+
+        $comment = new Comment();
+        $comment->user_id = Auth::id();
+        $comment->post_id = $postId;
+        $comment->content = $validatedData['content'];
+        $comment->save();
+
+        return response()->json(['message' => 'Comment created successfully']);
+    }
+
+    public function destroy($postId, $commentId)
+    {
+        $comment = Comment::where('post_id', $postId)->findOrFail($commentId);
+
+        if (Auth::id() === $comment->user_id) {
+            $comment->delete();
+            return response()->json(['message' => 'Comment deleted successfully']);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    }
+
+
 }
