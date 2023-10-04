@@ -18,6 +18,12 @@ class ProfilePostController extends Controller
         return response()->json(['photos' => $photos]);
     }
 
+    public function showUserPhotosById($userId)
+    {
+        $photos = ProfilePost::where('user_id', $userId)->get();
+
+        return response()->json(['photos' => $photos]);
+    }
 
     public function storePhoto(Request $request)
     {

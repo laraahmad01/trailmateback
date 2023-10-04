@@ -23,6 +23,11 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::post('createuser', [UserController::class, 'create'])->name('createuser');
 
+// trails
+Route::get('/trails', [TrailController::class, 'index']);
+Route::get('/trails/{id}', [TrailController::class, 'show']);
+Route::get('/trails/search', [TrailController::class, 'search']);
+
 Route::middleware('auth:sanctum')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -34,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users/{id}', [UserController::class, 'getUser']);
     Route::get('users', [UserController::class, 'getAllUsers']);
     Route::get('userInfo', [UserController::class, 'show']);
+    Route::get('userInfo/{id}', [UserController::class, 'showById']);
     Route::put('userInfo', [UserController::class, 'updateUserInfo']);
 
     // Collection
@@ -53,10 +59,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/trail-history/{id}', [TrailsHistoryController::class, 'update']);
     Route::delete('/trail-history/{id}', [TrailsHistoryController::class, 'destroy']);
 
-    // Trails
-    Route::get('/trails', [TrailController::class, 'index']);
-    Route::get('/trails/{id}', [TrailController::class, 'show']);
-
     // Community
     Route::post('/communities/create', [CommunityController::class, 'create']);
     Route::get('/communities/user', [CommunityController::class, 'userCommunities']);
@@ -71,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Community Member
     Route::get('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'show']);
     Route::put('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'update']);
-    Route::delete('/communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
+    Route::delete('communities/{communityId}/members/{memberId}', [CommunityMemberController::class, 'destroy']);
     Route::get('communities/{communityId}/members', [CommunityMemberController::class, 'getMembersInfo']);
     Route::post('communities/{communityId}/add', [CommunityMemberController::class, 'addMembersToCommunity']);
 
@@ -85,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User Photos
     Route::get('/profile/photos', [ProfilePostController::class, 'showUserPhotos']);
+    Route::get('/{id}/profile/photos', [ProfilePostController::class, 'showUserPhotosById']);
     Route::post('/profile/photos', [ProfilePostController::class, 'storePhoto']);
 
     // Like

@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
+            $table->string('image_url');
+            $table->decimal('rating', 5, 2)->nullable();
+            $table->integer('reviews')->default(0);
+            $table->string('location');
             $table->timestamps();
         });
     }

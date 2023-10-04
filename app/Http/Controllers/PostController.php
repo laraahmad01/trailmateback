@@ -27,7 +27,7 @@ class PostController extends Controller
             $locationData = $request->input('locationData', [
                 'latitude' => 0.0,
                 'longitude' => 0.0,
-                'city' => 'Unknown City',
+                'city' => 'City',
             ]);
 
             $post = new Post();

@@ -43,6 +43,29 @@ class UserController extends Controller
         ]);
     }
 
+    public function showById($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+                'code' => 404,
+            ]);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'email' => $user->email,
+            'country' => $user->country,
+            'city' => $user->city,
+            'image_url' => $user->image_url,
+            'role' => $user->role,
+        ]);
+    }
+
     public function getAllUsers()
     {
         $users = User::all();

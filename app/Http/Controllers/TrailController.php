@@ -19,4 +19,16 @@ class TrailController extends Controller
         $trail = Trail::findOrFail($id);
         return response()->json(['trail' => $trail]);
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query'); 
+
+        $results = Trail::where('name', 'LIKE', "%$query%")
+            ->orWhere('location', 'LIKE', "%$query%")
+            ->get();
+
+        return response()->json(['results' => $results]);
+    }
+
 }

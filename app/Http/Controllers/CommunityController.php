@@ -141,19 +141,19 @@ class CommunityController extends Controller
     public function showWithMembersAndImages($id)
     {
         try {
-            // Get community data
+            $authenticatedUserId = Auth::user()->id; 
+
             $community = Community::findOrFail($id);
 
-            // Get the count of community members
             $membersCount = CommunityMember::where('community_id', $id)->count();
 
-            // Get images uploaded in posts associated with this community
             $images = Post::where('community_id', $id)
                 ->whereNotNull('image_url')
                 ->pluck('image_url')
                 ->toArray();
 
             return response()->json([
+                'authenticated_user_id' => $authenticatedUserId,
                 'community' => $community,
                 'members_count' => $membersCount,
                 'images' => $images,
@@ -163,6 +163,5 @@ class CommunityController extends Controller
             return response()->json(['error' => 'An error occurred while fetching community data.'], 500);
         }
     }
-
 
 }
